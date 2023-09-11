@@ -1,0 +1,6 @@
+- Un splash mientras se carga data.json por primera vez.
+- README con los pasos para contribuir con nuevos juegos.
+- Webworker para almacenar imágenes en la cache.
+- Empaquetar la app en un APK y publicarla en Apklis.
+- La versión web debe ser PWA.
+- Implementar notificaciones.
