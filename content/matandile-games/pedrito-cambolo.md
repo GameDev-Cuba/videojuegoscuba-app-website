@@ -3,7 +3,7 @@ title: Pedrito Cambolo
 icon: assets/pedrito-cambolo.png
 links:
     - name: 🌎 Web
-      url: https://matandile.videojuegos.org/pedrito-cambolo
+      url: https://matandile.videojuegoscuba.org/pedrito-cambolo
     - name: 📱 Android (Apklis)
       url: https://www.apklis.cu/application/org.videojuegoscuba.matandile.pedrito_cambolo
 ---

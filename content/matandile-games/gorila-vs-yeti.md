@@ -3,7 +3,7 @@ title: Gorila vs Yeti
 icon: assets/gorila-vs-yeti.png
 links:
     - name: 🌎 Web
-      url: https://matandile.videojuegos.org/gorila-vs-yeti
+      url: https://matandile.videojuegoscuba.org/gorila-vs-yeti
     - name: 📱 Android (Apklis)
       url: https://www.apklis.cu/application/org.videojuegoscuba.matandile.gorilla_vs_yeti
 ---
