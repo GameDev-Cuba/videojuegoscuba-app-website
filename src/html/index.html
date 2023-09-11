@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideojuegosCuba App</title>
+</head>
+
+<style>
+    html,
+    body {
+        background-color: lightblue;
+    }
+
+    body {
+        margin: 0px;
+        padding: 0px;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    #gamesContainer {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .gameContainer {
+        padding: 5px;
+    }
+
+    .gameIcon {
+        border-radius: 20px;
+        width: 72px;
+        height: 72px;
+        transition: all .2s ease-in-out;
+    }
+
+    .gameIcon:hover {
+        transform: scale(1.05);
+    }
+
+    .gameSelected img {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    #gameDetailsContainer {
+        display: grid;
+        background: skyblue;
+        padding-top: 20px;
+        gap: 20px;
+        grid-template-columns: auto 1fr min-content;
+        visibility: hidden;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        box-shadow: 4px 4px black;
+    }
+
+    .gameDetailsImage {
+        width: 20vw;
+        max-width: 128px;
+        border-radius: 20px;
+        margin-left: 20px;
+        margin-bottom: 20px;
+    }
+
+    .gameDetailsLinks li {
+        list-style-type: none;
+    }
+
+    .gameDetailsLink {
+        text-decoration: none;
+    }
+
+    .gameDetailsClose label {
+        height: 1em;
+        padding: 5px 10px;
+        margin: 5px;
+        color: black;
+        border-color: black;
+        border-style: solid;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+
+    <div id="gamesContainer">
+    </div>
+
+    <div id="gameDetailsContainer">
+        <img class="gameDetailsImage">
+        <div class="gameDetailsBody">
+            <h3 class="gameDetailsTitle"></h3>
+            <div class="gameDetailsDescription">
+            </div>
+        </div>
+        <div class="gameDetailsClose"><label>x</label></div>
+    </div>
+
+    <template id="gameTemplate">
+        <div class="gameContainer">
+            <img class="gameIcon">
+        </div>
+    </template>
+
+
+    <!-- SCRIPTS -->
+
+    <script>
+
+        const gamesDiv = document.getElementById("gamesContainer");
+        /** @type {HTMLTemplateElement} */
+        const gameTemplate = document.getElementById("gameTemplate");
+
+        start();
+
+        async function start() {
+
+            const data = await readData();
+
+            const games = data.developers.flatMap(dev => dev.games.map(game => ({
+                _developer: dev.name,
+                _iconUrl: dev.name + "/" + game.icon,
+                ...game
+            })));
+
+            for (let i = 0; i < 40; i++) {
+
+                for (const game of games) {
+
+                    createGame(game);
+                }
+            }
+
+            initDetailsContainer();
+        }
+
+        async function readData() {
+
+            const localStorageKey = "videojuegoscuba-app-data-cache";
+
+            let data;
+
+            try {
+
+                const dataContent = window.localStorage.getItem(localStorageKey);
+
+                if (dataContent) {
+
+                    console.log("Get data from localStorage");
+
+                    data = JSON.parse(dataContent);
+                }
+
+            } catch (e) {
+
+                console.log(e);
+            }
+
+            const dataUrl = "data.json?t=" + Date.now();
+
+            if (data) {
+
+                console.log("Fetching fresh data for storing in localStorage");
+
+                fetch(dataUrl).then(resp => resp.json()).then(data => {
+
+                    console.log("Updating data cache...");
+
+                    try {
+
+                        window.localStorage.setItem(localStorageKey, JSON.stringify(data));
+
+                    } catch (e) {
+
+                        console.log(e);
+                    }
+                });
+
+            } else {
+
+                console.log("No data available in localStorage. Fetching for the first time...");
+
+                const resp = await fetch(dataUrl);
+
+                data = await resp.json();
+
+                try {
+
+                    console.log("Saving data cache...");
+
+                    window.localStorage.setItem(localStorageKey, JSON.stringify(data));
+
+                } catch (e) {
+
+                    console.log(e);
+                }
+            }
+
+            return data;
+        }
+
+        function initDetailsContainer() {
+
+            /** @type {HTMLElement} */
+            const btn = document.getElementsByClassName("gameDetailsClose")[0];
+
+            const container = Control.fromElement("gameDetailsContainer");
+
+            btn.addEventListener("click", () => {
+
+                container.element.style.visibility = "hidden";
+            });
+        }
+
+        function createGame(game) {
+
+            const ui = Control.fromTemplate("gameTemplate", gamesDiv);
+
+            const screenWidth = window.innerWidth;
+            let width = Math.floor(screenWidth / 4) - 10;
+
+            if (width > 128) {
+
+                const count = Math.floor(screenWidth / 128) - 1;
+                width = Math.floor(screenWidth / count) - 10;
+            }
+
+            ui.setAttr("gameIcon", "src", game._iconUrl);
+            ui.addStyle("gameIcon", { width: width + "px", height: width + "px" });
+
+            ui.element.addEventListener("click", () => {
+
+                showGameDetails(game, ui.element);
+            });
+        }
+
+        /**
+         * @param {any} game
+         * @param {HTMLElement} gameDiv
+         */
+        function showGameDetails(game, gameDiv) {
+
+            const list = document.getElementsByClassName("gameSelected");
+
+            for (let i = 0; i < list.length; i++) {
+
+                list.item(i).classList.remove("gameSelected");
+            }
+
+            gameDiv.classList.add("gameSelected");
+
+            const ui = Control.fromElement("gameDetailsContainer");
+
+            ui.element.style.visibility = "visible";
+
+            ui.setAttr("gameDetailsImage", "src", game._iconUrl);
+
+            const linksHtml = game.links.map(link => `<li><a target="_blank" class="gameDetailsLink" href="${link.url}">${link.name}</a></li>`).join("");
+
+            ui.setInnerHtml("gameDetailsTitle", game.title);
+            ui.setInnerHtml("gameDetailsDescription", `${game.content} <ul class="gameDetailsLinks">${linksHtml}<ul>`);
+        }
+
+        class Control {
+
+            /**
+             * @param {string} template
+             * @param {HTMLElement} parent
+             **/
+            static fromTemplate(templateName, parent) {
+
+                /** @type {HTMLTemplateElement} */
+                const template = document.getElementById(templateName);
+
+                /** @type {HTMLElement} */
+                const element = document.importNode(template.content.firstElementChild, true);
+
+                if (parent) {
+
+                    parent.appendChild(element);
+                }
+
+                return new Control(element);
+            }
+
+            static fromElement(id) {
+
+                return new Control(document.getElementById(id));
+            }
+
+            /**
+             * @param {HTMLElement} element
+             **/
+            constructor(element) {
+
+                this.element = element;
+            }
+
+            setInnerHtml(clsName, html) {
+
+                const elem = this.element.getElementsByClassName(clsName)[0];
+
+                elem.innerHTML = html;
+            }
+
+            setAttr(clsName, attr, value) {
+
+                const elem = this.element.getElementsByClassName(clsName)[0];
+
+                elem.setAttribute(attr, value);
+            }
+
+            addStyle(clsName, style) {
+
+                /** @type {HTMLElement} */
+                const elem = this.element.getElementsByClassName(clsName)[0];
+
+                for (const k in style) {
+
+                    elem.style[k] = style[k];
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
