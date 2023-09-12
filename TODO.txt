@@ -1,9 +1,11 @@
 - Un splash mientras se carga data.json por primera vez.
-- Mostrar las nuevas apps primero.
-- Mostrar las apps favoritas primero. Hay que crear UI de favoritos.
-- README con los pasos para contribuir con nuevos juegos.
 - Webworker para almacenar imágenes en la cache.
+- Un ícono para la app.
+- Habilitar OpenGraph metedata en el sitio.
 - Empaquetar la app en un APK y publicarla en Apklis.
+- Mostrar las apps favoritas primero. Hay que crear UI de favoritos.
+- Mostrar las nuevas apps primero.
+- README con los pasos para contribuir con nuevos juegos.
 - La versión web debe ser PWA.
 - Implementar notificaciones.
-- Anima cuando entra y sale el panel de detalles del juego.
+- Animar cuando entra y sale el panel de detalles del juego.
