@@ -2,7 +2,11 @@
 - Webworker para almacenar imágenes en la cache.
 - Un ícono para la app.
 - Habilitar OpenGraph metedata en el sitio.
+- Ver en formato rejilla o formato lista (con los nombres).
 - Empaquetar la app en un APK y publicarla en Apklis.
+- Parsear el markdown.
+- Permitir buscar.
+- Ver las apps de un mismo creador.
 - Mostrar las apps favoritas primero. Hay que crear UI de favoritos.
 - Mostrar las nuevas apps primero.
 - README con los pasos para contribuir con nuevos juegos.

@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideojuegosCuba App</title>
+    <title>VideojuegosCuba</title>
+    <meta name="og:title" content="VideojuegosCuba">
+    <meta name="og:description" content="Conoce nuestros juegos.">
+    <meta name="og:image" content="app.videojuegoscuba.org/banner.png">
+    <meta name="twitter:card" content="app.videojuegoscuba.org/banner.png">
+    <meta name="twitter:site" content="@GameDevCuba">
+    <meta name="twitter:creator" content="@GameDevCuba">
+    <link rel="icon" type="image/x-icon" href="/icon.png">
 </head>
 
 <style>
@@ -85,9 +92,44 @@
         color: black;
         cursor: pointer;
     }
+
+    /** Splash **/
+
+    #splash {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation-name: splashAnim;
+        animation-delay: 0ms;
+        animation-duration: .5s;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+    }
+
+    @keyframes splashAnim {
+        from {
+            opacity: 0.8;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    #splash-container {
+        background: lightblue;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+    }
 </style>
 
 <body>
+
+    <div id="splash-container">
+        <img id="splash" src="splash.png" width="128">
+    </div>
 
     <div id="gamesContainer">
     </div>
@@ -117,7 +159,12 @@
         /** @type {HTMLTemplateElement} */
         const gameTemplate = document.getElementById("gameTemplate");
 
-        start();
+        function hideSplash() {
+
+            console.log("Hide splash");
+
+            document.getElementById("splash-container").remove();
+        }
 
         async function start() {
 
@@ -147,6 +194,8 @@
             }
 
             initDetailsContainer();
+
+            hideSplash();
         }
 
         async function readData() {
@@ -241,7 +290,16 @@
             }
 
             ui.setAttr("gameIcon", "src", game._iconUrl);
-            ui.addStyle("gameIcon", { width: width + "px", height: width + "px" });
+            ui.addStyle("gameIcon", {
+                width: width + "px",
+                height: width + "px",
+                "background-color": "#0004"
+            });
+
+            ui.findElement("gameIcon").addEventListener("load", () => {
+
+                ui.findElement("gameIcon").style.backgroundColor = "";
+            });
 
             ui.element.addEventListener("click", () => {
 
@@ -330,29 +388,42 @@
 
             setInnerHtml(clsName, html) {
 
-                const elem = this.element.getElementsByClassName(clsName)[0];
+                const elem = this.findElement(clsName);
 
                 elem.innerHTML = html;
             }
 
             setAttr(clsName, attr, value) {
 
-                const elem = this.element.getElementsByClassName(clsName)[0];
+                const elem = this.findElement(clsName);
 
                 elem.setAttribute(attr, value);
             }
 
             addStyle(clsName, style) {
 
-                /** @type {HTMLElement} */
-                const elem = this.element.getElementsByClassName(clsName)[0];
+                const elem = this.findElement(clsName);
 
                 for (const k in style) {
 
                     elem.style[k] = style[k];
                 }
             }
+
+            findElement(clsName) {
+
+                /** @type {HTMLElement} */
+                const elem = this.element.getElementsByClassName(clsName)[0];
+
+                return elem;
+            }
         }
+
+
+        window.addEventListener("load", () => {
+
+            start();
+        });
 
     </script>
 </body>
